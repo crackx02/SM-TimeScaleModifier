@@ -15,6 +15,12 @@ static bool ms_mhHooksAttached = false;
 #define EASY_CLASS_HOOK(address, class_name, func_name) \
 	MH_CreateHook((LPVOID)(v_mod_base + address), (LPVOID)class_name::h_##func_name, (LPVOID*)&class_name::o_##func_name)
 
+constexpr uintptr_t Offset_ContraptionUpdate = 0x02DA770;
+constexpr uintptr_t Offset_ContraptionRender = 0x02D9180;
+constexpr uintptr_t Offset_GameInstanceUpdate = 0x0343030;
+constexpr uintptr_t Offset_PlayStateUpdate = 0x042E600;
+constexpr uintptr_t Offset_GraphicsOptionsMenu_Setup = 0x03031C0;
+
 static void (*o_ContraptionUpdate)(void*, float) = nullptr;
 static void (*o_ContraptionRender)(void*, float) = nullptr;
 static void (*o_GameInstanceUpdate)(void*, float) = nullptr;
@@ -53,14 +59,14 @@ static void process_attach(HMODULE hMod)
 	ms_mhInitialized = true;
 
 	const std::uintptr_t v_mod_base = std::uintptr_t(GetModuleHandle(NULL));
-	if (DEFINE_HOOK(0x2E4C40, h_ContraptionUpdate, o_ContraptionUpdate) != MH_OK) return;
-	if (DEFINE_HOOK(0x2E30B0, h_ContraptionRender, o_ContraptionRender) != MH_OK) return;
-	if (DEFINE_HOOK(0x34EBA0, h_GameInstanceUpdate, o_GameInstanceUpdate) != MH_OK) return;
-	if (DEFINE_HOOK(0x43E770, h_PlayStateUpdate, o_PlayStateUpdate) != MH_OK) return;
+	if (DEFINE_HOOK(Offset_ContraptionUpdate, h_ContraptionUpdate, o_ContraptionUpdate) != MH_OK) return;
+	if (DEFINE_HOOK(Offset_ContraptionRender, h_ContraptionRender, o_ContraptionRender) != MH_OK) return;
+	if (DEFINE_HOOK(Offset_GameInstanceUpdate, h_GameInstanceUpdate, o_GameInstanceUpdate) != MH_OK) return;
+	if (DEFINE_HOOK(Offset_PlayStateUpdate, h_PlayStateUpdate, o_PlayStateUpdate) != MH_OK) return;
 
 	// Gui hook
-	if (DEFINE_HOOK(0x30EB70, GraphicsOptionsMenu::h_CreateWidgets, GraphicsOptionsMenu::o_CreateWidgets)) return;
-
+	if (DEFINE_HOOK(Offset_GraphicsOptionsMenu_Setup, GraphicsOptionsMenu::h_CreateWidgets, GraphicsOptionsMenu::o_CreateWidgets)) return;
+	
 	ms_mhHooksAttached = MH_EnableHook(MH_ALL_HOOKS) == MH_OK;
 }
 

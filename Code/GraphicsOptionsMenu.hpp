@@ -10,6 +10,8 @@
 class GraphicsOptionsMenu : public OptionsSubMenuBase
 {
 public:
+	constexpr static float TimeScaleMin = 0.0f;
+	constexpr static float TimeScaleMax = 20.0f;
 	inline static float TimeScale = 1.0f;
 
 	inline static __int64 (*o_CreateWidgets)(GraphicsOptionsMenu*, MyGUI::Widget* parent) = nullptr;

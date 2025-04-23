@@ -6,14 +6,11 @@
 
 #include "Utils/Console.hpp"
 
-constexpr float g_minTimeScale = 0.0f;
-constexpr float g_maxTimeScale = 20.0f;
-
 class TimeScaleSlider : public OptionsItemSlider
 {
 public:
 	inline TimeScaleSlider(MyGUI::Widget* pWidget) :
-		OptionsItemSlider(pWidget, "Time Scale", g_minTimeScale, g_maxTimeScale, 200)
+		OptionsItemSlider(pWidget, "Time Scale", GraphicsOptionsMenu::TimeScaleMin, GraphicsOptionsMenu::TimeScaleMax, 200)
 	{
 		this->update();
 
@@ -23,7 +20,12 @@ public:
 
 	void updateText()
 	{
-		m_pValueTextBox->setCaption(std::to_string(this->getFraction()));
+		std::string text = std::to_string(this->getFraction());
+		// Restrict to 2 decimal points
+		size_t dotPos = text.find('.');
+		if ( dotPos != std::string::npos && dotPos + 3 < text.size() )
+			text = text.substr(0, dotPos + 3);
+		m_pValueTextBox->setCaption(text);
 	}
 
 	void sliderChangePosition(MyGUI::ScrollBar* caller, std::size_t new_val)
@@ -34,7 +36,7 @@ public:
 
 	std::size_t getTimeScaleApprox() const
 	{
-		return std::size_t((GraphicsOptionsMenu::TimeScale / g_maxTimeScale) * float(m_uSteps));
+		return std::size_t((GraphicsOptionsMenu::TimeScale / GraphicsOptionsMenu::TimeScaleMax) * float(m_uSteps));
 	}
 
 	void update() override
